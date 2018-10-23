@@ -30,8 +30,6 @@ public class CustomerServlet extends HttpServlet {
             case "edit":
                 updateCustomer(request, response);
                 break;
-            case "delete":
-                break;
             default:
                 listCustomers(request, response);
                 break;
@@ -56,6 +54,7 @@ public class CustomerServlet extends HttpServlet {
                 deleteCustomer(request, response);
                 break;
             case "view":
+                viewCustomer(request, response);
                 break;
             default:
                 listCustomers(request, response);
@@ -161,6 +160,25 @@ public class CustomerServlet extends HttpServlet {
         request.setAttribute("customers", customers);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
+        try {
+            dispatcher.forward(request, response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void viewCustomer(HttpServletRequest request, HttpServletResponse response) {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Customer customer = this.customerService.findById(id);
+        RequestDispatcher dispatcher;
+        if(customer == null){
+            dispatcher = request.getRequestDispatcher("error-404.jsp");
+        } else {
+            request.setAttribute("customer", customer);
+            dispatcher = request.getRequestDispatcher("view.jsp");
+        }
         try {
             dispatcher.forward(request, response);
         } catch (ServletException e) {
